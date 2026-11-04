@@ -1,23 +1,56 @@
-# bloop 🎉
+<p align="center">
+  <img src="landing/icon.svg" width="96" height="96" alt="Bloop logo">
+</p>
 
-Never miss a midnight. Bloop keeps your circle's birthdays (and anniversaries, and any "day" you care about) and pings you **right before 12:00 AM** so your wish lands first. Bare React Native (no Expo), Android and iOS.
+<h1 align="center">Bloop</h1>
 
-Palette: forest `#1E4D2B`, lime `#E3F988`, butter `#E4D96F`, on warm cream. Headings and wordmark in Fraunces (soft), UI text in Manrope. Logo: the monoline popper in `src/components/Logo.tsx`; regenerate app icons with `node scripts/make-icons.js`.
+<p align="center"><b>Never miss a midnight.</b><br>Birthday reminders timed for 12:00 AM, with the wish already written.</p>
+
+<p align="center">
+  <a href="https://github.com/Viral-Sachde/bloop-bday/releases/latest"><b>Download for Android</b></a> ·
+  <a href="https://bloop-azure.vercel.app">Website</a>
+</p>
+
+---
+
+## Why Bloop
+
+Calendar reminders go off in the morning, and by then the group chat has already said happy birthday thirty times. Bloop pings you at **11:55 PM** the night before and again at **12:00 AM sharp**, with a message ready to send, so your wish lands first.
 
 ## What it does
 
-- **Midnight pings**: by default an 11:55 PM heads-up the night before and a 12:00 AM-sharp ping on the day. Change the defaults in Settings, or set custom times per person (days before + exact time).
-- **Any occasion**: birthdays, anniversaries, or your own ("Graduation").
-- **Bring your circle in**: phone contacts (anything synced into the contact book), `.vcf` / `.ics` files, or paste a list (`Aman 12 Oct`).
-- **Wishes**: five tones (sweet, funny, short, hype, formal), tuned to the relationship. Copy, WhatsApp (opens their chat if you saved a number), SMS, or share anywhere.
-- **Memories**: pin photos from your gallery to a person, and Bloop surfaces photos taken on that date in past years.
-- **Ads**: adaptive banner above the tab bar, an inline sponsored card in the list, a frequency-capped video interstitial after adding people, and a rewarded video that unlocks the premium wish pack for 24h.
+- **Midnight pings:** a heads-up at 11:55 PM and a ping at 12:00 AM. Change the times for everyone, or per person.
+- **Any occasion:** birthdays, anniversaries, or a date you name yourself.
+- **Bring your circle in:** import from phone contacts, `.vcf` / `.ics` files, or paste a list like `Aman 12 Oct`.
+- **Wishes in your voice:** five tones (sweet, funny, short, hype, formal), tuned to whether they're your partner, family, a friend or a colleague. Send by WhatsApp, SMS, or copy and share.
+- **Memories:** pin photos to a person, and see photos you took on that date in past years.
+- **Private:** no account, no server. Everything stays on your phone.
 
-### About Facebook / Instagram / Snapchat
+## Install (Android)
 
-Those platforms do not expose friends' birthdays to third-party apps (Facebook removed it in 2018, the others never had it), so Bloop cannot pull from them. The Import screen says so plainly and points to what works: contacts, calendar files and paste-a-list.
+1. On your phone, open the [latest release](https://github.com/Viral-Sachde/bloop-bday/releases/latest) and tap **bloop.apk** under Assets.
+2. Open the downloaded file. If Android asks, allow installs from your browser.
+3. If Play Protect says it doesn't recognise the app, tap **More details → Install anyway**. Bloop isn't on the Play Store yet.
+4. On first launch, allow **notifications** and **Alarms & reminders**. The second one makes the 12:00 AM ping exact.
 
-## Run it
+Requires Android 7.0 or later (64-bit). An iPhone version is in the works.
+
+## FAQ
+
+**Can it import birthdays from Facebook or Instagram?**
+No. Facebook removed friends' birthdays from its API in 2018, and Instagram and Snapchat never offered them. Use contacts, calendar files, or paste a list.
+
+**My reminder didn't arrive at exactly 12:00.**
+On Android 12 and later, exact times need the "Alarms & reminders" permission. Bloop's Settings shows whether it's on and links straight to the toggle.
+
+**Is it free?**
+Yes, with a few ads. Watching a short video unlocks the premium wish pack for 24 hours.
+
+---
+
+## For developers
+
+Bare React Native 0.87 (no Expo), TypeScript, notifee for exact alarms, zustand + AsyncStorage for storage.
 
 ```sh
 npm install
@@ -27,18 +60,9 @@ npm run android                # with an emulator/device attached
 
 iOS: `cd ios && bundle install && bundle exec pod install`, then `npm run ios`.
 
-### Android on a machine like this one
+Android builds need SDK platform 36, build-tools 36.0.0, NDK 27.1.12297006, JDK 17+, and `android/local.properties` with `sdk.dir=...`. Faster local builds: `./gradlew assembleDebug -PreactNativeArchitectures=x86_64`.
 
-The build needs Android SDK platform 36, build-tools 36.0.0 and NDK 27.1.12297006 (install with `sdkmanager`), JDK 17+, and `android/local.properties` with `sdk.dir=...`.
-Faster local builds: `./gradlew assembleDebug -PreactNativeArchitectures=x86_64`.
-
-## Before you ship
-
-1. **Ads**: every id in `src/services/ads.ts`, `AndroidManifest.xml`, `app.json` and (iOS) `Info.plist` is a Google **test** id. Replace them with your AdMob ids. Set up a UMP consent message in AdMob for EU/UK users.
-2. **Exact alarms**: Android 12+ needs the user to allow "Alarms & reminders" for 12:00 AM sharp. Settings shows the status and deep-links to the toggle. If you publish on Play, declare the `SCHEDULE_EXACT_ALARM` use in the console.
-3. **iOS**: add `NSContactsUsageDescription` and `NSPhotoLibraryUsageDescription` to `Info.plist`, and enable the Push Notifications capability if you move to remote pushes.
-
-## Tests / QA
+### Checks
 
 ```sh
 npm run typecheck
@@ -47,7 +71,7 @@ npm test            # unit + screen tests (Jest, @testing-library/react-native)
 npm run qa:android  # end-to-end on a running emulator (see qa/README.md)
 ```
 
-## Structure
+### Structure
 
 ```
 src/lib        pure logic: dates, reminder planning, wishes, importers, filters
@@ -55,6 +79,15 @@ src/services   native edges: notifications (notifee), contacts, gallery, share, 
 src/store.ts   zustand + AsyncStorage persistence
 src/screens    Splash, Onboarding, Home, Circle, Person, Editor, Import, Settings
 src/components UI kit: sheets, wheels, chips, icons, logo
+landing        marketing site (static, deployed on Vercel)
 scripts        icon generator
 qa             emulator end-to-end suite
 ```
+
+Brand: forest `#1E4D2B`, lime `#E3F988`, butter `#E4D96F`, on warm cream. Headings in Fraunces, UI in Manrope. Logo lives in `src/components/Logo.tsx`; regenerate app icons with `node scripts/make-icons.js`.
+
+### Before publishing to the Play Store
+
+1. **Ads:** every id in `src/services/ads.ts`, `AndroidManifest.xml`, `app.json` and `Info.plist` is a Google **test** id. Replace them with your AdMob ids and set up a UMP consent message for EU/UK users.
+2. **Exact alarms:** declare the `SCHEDULE_EXACT_ALARM` use in the Play Console.
+3. **iOS:** add `NSContactsUsageDescription` and `NSPhotoLibraryUsageDescription` to `Info.plist`.

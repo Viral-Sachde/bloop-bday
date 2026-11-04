@@ -80,3 +80,6 @@ qa/out/
 
 # design scratch
 design/
+
+landing/.vercel
+.claude/
