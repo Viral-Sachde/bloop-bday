@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://github.com/Viral-Sachde/bloop-bday/releases/latest"><b>Download for Android</b></a> ·
-  <a href="https://bloop-azure.vercel.app">Website</a>
+  <a href="https://bloop-bday.vercel.app">Website</a>
 </p>
 
 ---
