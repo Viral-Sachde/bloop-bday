@@ -20,6 +20,7 @@ import { describeRule, eventNoun, possessive, rulesFor } from '../lib/reminders'
 import { suggestWishes, TONES, Wish } from '../lib/wishes';
 import { RootStackParamList } from '../navigation/types';
 import { maybeShowInterstitial, showRewardedVideo } from '../services/ads';
+import { ADS_ENABLED } from '../config';
 import { findMemoryPhotos, GalleryPhoto, requestGalleryPermission } from '../services/gallery';
 import { copyText, sendSms, sendViaWhatsApp, shareText } from '../services/share';
 import { useStore } from '../store';
@@ -56,7 +57,7 @@ export function PersonScreen() {
   const occ = event ? nextOccurrence(event.month, event.day, now) : now;
   const age = event?.kind === 'birthday' ? turningAge(event.year, occ) : undefined;
   const days = event ? daysUntil(event.month, event.day, now) : 0;
-  const premiumOpen = settings.premiumWishesUntil > Date.now();
+  const premiumOpen = !ADS_ENABLED || settings.premiumWishesUntil > Date.now();
   const wishes = useMemo(() => (event ? suggestWishes(event, tone, age) : []), [event, tone, age]);
 
   const loadMemories = useCallback(async () => {
@@ -209,7 +210,7 @@ export function PersonScreen() {
                   {w.premium ? (
                     <View style={styles.premTag}>
                       <Icon name={locked ? 'lock' : 'star'} size={12} color={colors.forest} />
-                      <Text style={styles.premText}>{locked ? 'Premium' : 'Premium · unlocked'}</Text>
+                      <Text style={styles.premText}>{locked ? 'Premium' : ADS_ENABLED ? 'Premium · unlocked' : 'Premium'}</Text>
                     </View>
                   ) : null}
                   {locked ? (

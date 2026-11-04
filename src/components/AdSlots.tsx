@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { AD_UNITS } from '../services/ads';
+import { ADS_ENABLED } from '../config';
 import { colors, radius, spacing, type } from '../theme';
 
 /**
@@ -9,8 +10,12 @@ import { colors, radius, spacing, type } from '../theme';
  * collapsed until Google actually fills it, so users never see an empty box.
  */
 
-/** Adaptive banner pinned above the tab bar. */
+/** Adaptive banner pinned above the tab bar. Renders nothing in the ad-free build. */
 export function BannerSlot() {
+  return ADS_ENABLED ? <Banner /> : null;
+}
+
+function Banner() {
   const [state, setState] = useState<'loading' | 'loaded' | 'failed'>('loading');
   if (state === 'failed') return null;
   return (
@@ -25,8 +30,12 @@ export function BannerSlot() {
   );
 }
 
-/** Inline card-style ad dropped into long lists, clearly labelled. */
+/** Inline card-style ad dropped into long lists, clearly labelled. Renders nothing in the ad-free build. */
 export function InlineAdCard() {
+  return ADS_ENABLED ? <InlineAd /> : null;
+}
+
+function InlineAd() {
   const [state, setState] = useState<'loading' | 'loaded' | 'failed'>('loading');
   if (state === 'failed') return null;
   return (

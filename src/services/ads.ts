@@ -7,6 +7,7 @@ import mobileAds, {
   AdEventType,
   TestIds,
 } from 'react-native-google-mobile-ads';
+import { ADS_ENABLED } from '../config';
 
 /**
  * Ad units. These are Google's public TEST ids: they always fill and are safe
@@ -23,6 +24,7 @@ export const AD_UNITS = {
 let initPromise: Promise<void> | null = null;
 
 export function initAds(): Promise<void> {
+  if (!ADS_ENABLED) return Promise.resolve();
   if (!initPromise) {
     initPromise = (async () => {
       try {
@@ -69,11 +71,13 @@ function loadInterstitial() {
 }
 
 export function preloadInterstitial() {
+  if (!ADS_ENABLED) return;
   if (!interstitial) loadInterstitial();
 }
 
 /** Shows a full-screen video ad at a natural pause. Silent no-op when capped or not ready. */
 export function maybeShowInterstitial(): boolean {
+  if (!ADS_ENABLED) return false;
   if (!interstitial || !interstitialLoaded) return false;
   if (!shouldShowInterstitial(Date.now(), lastInterstitialAt)) return false;
   lastInterstitialAt = Date.now();
@@ -89,6 +93,7 @@ export function maybeShowInterstitial(): boolean {
 
 /** Resolves true only if the viewer actually earned the reward. */
 export function showRewardedVideo(): Promise<boolean> {
+  if (!ADS_ENABLED) return Promise.resolve(true);
   return new Promise(resolve => {
     const ad = RewardedAd.createForAdRequest(AD_UNITS.rewardedVideo);
     let earned = false;

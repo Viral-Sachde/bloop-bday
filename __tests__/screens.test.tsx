@@ -4,6 +4,13 @@ import React from 'react';
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
 let mockParams: any = {};
+let mockAdsEnabled = true;
+
+jest.mock('../src/config', () => ({
+  get ADS_ENABLED() {
+    return mockAdsEnabled;
+  },
+}));
 
 jest.mock('@react-navigation/native', () => {
   const React = require('react');
@@ -31,6 +38,7 @@ function daysFromNow(n: number) {
 beforeEach(() => {
   jest.clearAllMocks();
   mockParams = {};
+  mockAdsEnabled = true;
   useStore.setState({ events: [], settings: { ...DEFAULT_SETTINGS, onboarded: true }, hydrated: true });
 });
 
@@ -62,6 +70,13 @@ describe('HomeScreen', () => {
     useStore.getState().addEvent({ ...base, name: 'Aman', ...daysFromNow(3) });
     await render(<HomeScreen />);
     expect(screen.getByTestId('ad-inline')).toBeTruthy();
+  });
+
+  test('ad-free build shows no ad slot', async () => {
+    mockAdsEnabled = false;
+    useStore.getState().addEvent({ ...base, name: 'Aman', ...daysFromNow(3) });
+    await render(<HomeScreen />);
+    expect(screen.queryByTestId('ad-inline')).toBeNull();
   });
 });
 
@@ -186,6 +201,14 @@ describe('PersonScreen', () => {
     expect(screen.getAllByTestId('unlock-wishes').length).toBeGreaterThan(0);
     await act(async () => useStore.getState().updateSettings({ premiumWishesUntil: Date.now() + 1000 * 60 }));
     expect(screen.queryAllByTestId('wish-locked')).toHaveLength(0);
+  });
+
+  test('ad-free build opens every wish without a video', async () => {
+    mockAdsEnabled = false;
+    setup();
+    await render(<PersonScreen />);
+    expect(screen.queryAllByTestId('wish-locked')).toHaveLength(0);
+    expect(screen.queryAllByTestId('unlock-wishes')).toHaveLength(0);
   });
 
   test('tone chips change the wishes', async () => {

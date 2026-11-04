@@ -33,7 +33,7 @@ Calendar reminders go off in the morning, and by then the group chat has already
 3. If Play Protect says it doesn't recognise the app, tap **More details → Install anyway**. Bloop isn't on the Play Store yet.
 4. On first launch, allow **notifications** and **Alarms & reminders**. The second one makes the 12:00 AM ping exact.
 
-Requires Android 7.0 or later (64-bit). An iPhone version is in the works.
+Requires Android 7.0 or later. An iPhone version is in the works.
 
 ## FAQ
 
@@ -44,7 +44,7 @@ No. Facebook removed friends' birthdays from its API in 2018, and Instagram and 
 On Android 12 and later, exact times need the "Alarms & reminders" permission. Bloop's Settings shows whether it's on and links straight to the toggle.
 
 **Is it free?**
-Yes, with a few ads. Watching a short video unlocks the premium wish pack for 24 hours.
+Yes, and there are no ads. Every wish, including the premium pack, is open to everyone.
 
 ---
 
@@ -86,8 +86,20 @@ qa             emulator end-to-end suite
 
 Brand: forest `#1E4D2B`, lime `#E3F988`, butter `#E4D96F`, on warm cream. Headings in Fraunces, UI in Manrope. Logo lives in `src/components/Logo.tsx`; regenerate app icons with `node scripts/make-icons.js`.
 
+### Ads
+
+The app ships ad-free: `ADS_ENABLED` in `src/config.ts` is `false`, which turns off every ad slot and opens the premium wish pack. To bring ads back, set it to `true` and swap in real AdMob ids (below).
+
+### Release signing
+
+`assembleRelease` signs with the release key when `BLOOP_UPLOAD_STORE_FILE`, `BLOOP_UPLOAD_KEY_ALIAS`, `BLOOP_UPLOAD_STORE_PASSWORD` and `BLOOP_UPLOAD_KEY_PASSWORD` are set in `~/.gradle/gradle.properties`, otherwise with the debug key. Never commit the keystore or its passwords.
+
+```sh
+cd android && ./gradlew assembleRelease -PreactNativeArchitectures=armeabi-v7a,arm64-v8a
+```
+
 ### Before publishing to the Play Store
 
-1. **Ads:** every id in `src/services/ads.ts`, `AndroidManifest.xml`, `app.json` and `Info.plist` is a Google **test** id. Replace them with your AdMob ids and set up a UMP consent message for EU/UK users.
+1. **Ads (only if you turn them on):** every id in `src/services/ads.ts`, `AndroidManifest.xml`, `app.json` and `Info.plist` is a Google **test** id. Replace them with your AdMob ids and set up a UMP consent message for EU/UK users.
 2. **Exact alarms:** declare the `SCHEDULE_EXACT_ALARM` use in the Play Console.
 3. **iOS:** add `NSContactsUsageDescription` and `NSPhotoLibraryUsageDescription` to `Info.plist`.
